@@ -207,13 +207,4 @@ export class ApiService {
             }
         });
     }
-
-    /*private static checkResponseForError(response:any) {
-     // Can be made more vocal, like showing the user a toast w/ error
-     if (response == 'token_invalid') return false;
-     else if (response == 'token_expired') return false;
-     else if (response == 'token_absent') return false;
-
-     return true;
-     }*/
 }
