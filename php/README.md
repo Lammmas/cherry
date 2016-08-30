@@ -27,3 +27,7 @@ The API endpoints are as such, with query parameters (`Sort` and `Order` are for
   - `/public` - Purely for the pretty display of data
 
 Frankly, there are many possible upgrades to be done. For example, for filtering there should be support for non-strict filters, ex. `balance=>10` for Wallets. Also, proper OAuth security with protecting paths. In any case, wherever there was something lacking, it's commented in the code.
+
+
+
+Also, it seems that I've forgotten about the wagering system 0.0
