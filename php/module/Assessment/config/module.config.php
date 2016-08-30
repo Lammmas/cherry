@@ -145,7 +145,7 @@ return [
             'collection_query_whitelist' => [
                 0 => 'page',
                 1 => 'sort',
-                2 => 'direction',
+                2 => 'order',
                 3 => 'user_id',
                 4 => 'bonus_id',
                 5 => 'balance',
@@ -178,8 +178,8 @@ return [
             'collection_query_whitelist' => [
                 0 => 'page',
                 1 => 'sort',
-                2 => 'direction',
-                3 => 'tigger',
+                2 => 'order',
+                3 => 'trigger',
                 4 => 'value',
                 5 => 'type',
                 6 => 'multiplier',

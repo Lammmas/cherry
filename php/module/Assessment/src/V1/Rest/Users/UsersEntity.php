@@ -39,4 +39,17 @@ class UsersEntity extends ArrayObject
 
         return $vars;
     }
+
+    /**
+    * Override the default function in order to encrypt the Password field
+    * 
+    * @param $array 
+    */
+    public function exchangeArray(array $array)
+    {
+        foreach ($array as $k => $v) {
+            if ($k == 'password') $this->password = password_hash($array['password'], PASSWORD_BCRYPT);
+            else $this->{$k} = $v;
+        }
+    }
 }
