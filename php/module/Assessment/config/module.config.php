@@ -1,5 +1,19 @@
 <?php
 return [
+    'view_manager' => [
+        'display_not_found_reason' => true,
+        'display_exceptions'       => true,
+        'doctype'                  => 'HTML5',
+        'not_found_template'       => 'error/404',
+        'exception_template'       => 'error/index',
+        'template_map' => [
+            'assessment/v1/rpc/frontend/frontend/frontend' => __DIR__ . '/../view/frontend/frontend.phtml',
+            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
+        ],
+        'template_path_stack' => [
+            __DIR__ . '/../view',
+        ],
+    ],
     'router' => [
         'routes' => [
             'assessment.rest.users' => [
@@ -59,6 +73,16 @@ return [
                     ],
                 ],
             ],
+            'assessment.rpc.frontend' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/public',
+                    'defaults' => [
+                        'controller' => 'Assessment\\V1\\Rpc\\Frontend\\Controller',
+                        'action' => 'frontend',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -69,6 +93,7 @@ return [
             3 => 'assessment.rpc.auth',
             5 => 'assessment.rpc.game',
             8 => 'assessment.rpc.deposit',
+            9 => 'assessment.rpc.frontend',
         ],
     ],
     'zf-rest' => [
@@ -121,8 +146,8 @@ return [
                 0 => 'page',
                 1 => 'sort',
                 2 => 'direction',
-                3 => 'user',
-                4 => 'bonus',
+                3 => 'user_id',
+                4 => 'bonus_id',
                 5 => 'balance',
                 6 => 'original',
                 7 => 'currency',
@@ -175,6 +200,7 @@ return [
             'Assessment\\V1\\Rpc\\Auth\\Controller' => 'HalJson',
             'Assessment\\V1\\Rpc\\Game\\Controller' => 'HalJson',
             'Assessment\\V1\\Rpc\\Deposit\\Controller' => 'HalJson',
+            'Assessment\\V1\\Rpc\\Frontend\\Controller' => 'Documentation',
         ],
         'accept_whitelist' => [
             'Assessment\\V1\\Rest\\Users\\Controller' => [
@@ -207,6 +233,11 @@ return [
                 1 => 'application/json',
                 2 => 'application/*+json',
             ],
+            'Assessment\\V1\\Rpc\\Frontend\\Controller' => [
+                0 => 'application/vnd.assessment.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'Assessment\\V1\\Rest\\Users\\Controller' => [
@@ -230,6 +261,10 @@ return [
                 1 => 'application/json',
             ],
             'Assessment\\V1\\Rpc\\Deposit\\Controller' => [
+                0 => 'application/vnd.assessment.v1+json',
+                1 => 'application/json',
+            ],
+            'Assessment\\V1\\Rpc\\Frontend\\Controller' => [
                 0 => 'application/vnd.assessment.v1+json',
                 1 => 'application/json',
             ],
@@ -565,32 +600,37 @@ return [
             'Assessment\\V1\\Rpc\\Auth\\Controller' => \Assessment\V1\Rpc\Auth\AuthControllerFactory::class,
             'Assessment\\V1\\Rpc\\Game\\Controller' => \Assessment\V1\Rpc\Game\GameControllerFactory::class,
             'Assessment\\V1\\Rpc\\Deposit\\Controller' => \Assessment\V1\Rpc\Deposit\DepositControllerFactory::class,
+            'Assessment\\V1\\Rpc\\Frontend\\Controller' => \Assessment\V1\Rpc\Frontend\FrontendControllerFactory::class,
         ],
     ],
     'zf-rpc' => [
         'Assessment\\V1\\Rpc\\Auth\\Controller' => [
             'service_name' => 'Auth',
             'http_methods' => [
-                0 => 'GET',
-                1 => 'POST',
+                0 => 'POST',
             ],
             'route_name' => 'assessment.rpc.auth',
         ],
         'Assessment\\V1\\Rpc\\Game\\Controller' => [
             'service_name' => 'Game',
             'http_methods' => [
-                0 => 'GET',
-                1 => 'POST',
+                0 => 'POST',
             ],
             'route_name' => 'assessment.rpc.game',
         ],
         'Assessment\\V1\\Rpc\\Deposit\\Controller' => [
             'service_name' => 'Deposit',
             'http_methods' => [
-                0 => 'GET',
-                1 => 'POST',
+                0 => 'POST',
             ],
             'route_name' => 'assessment.rpc.deposit',
+        ],
+        'Assessment\\V1\\Rpc\\Frontend\\Controller' => [
+            'service_name' => 'Frontend',
+            'http_methods' => [
+                0 => 'GET',
+            ],
+            'route_name' => 'assessment.rpc.frontend',
         ],
     ],
 ];

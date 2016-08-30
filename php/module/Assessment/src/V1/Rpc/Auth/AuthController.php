@@ -41,6 +41,7 @@ class AuthController extends AbstractActionController
 	    	return new ViewModel([
 	            'status' => 'success',
 	            'message' => 'Successfully authenticated' . ($bonus ? ' and earned bonus' : ''),
+                'user' => $user,
 	        ]);
 	    } 
 	    else return new ViewModel([
