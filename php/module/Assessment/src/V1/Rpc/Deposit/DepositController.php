@@ -66,11 +66,17 @@ class DepositController extends AbstractActionController
         }
 
     	$bonus = $this->getBonus($user['id'], $amount);
-
-    	return new ViewModel([
+        $data = [
             'status' => 'success',
-            'message' => 'Successfully deposited' . ($bonus ? ' and earned bonus' : ''),
-        ]);
+            'message' => 'Successfully deposited',
+        ];
+
+        if ($bonus) {
+            $data['message'] .= ' and earned bonus';
+            $data['bonus'] = $bonus;
+        }
+
+    	return new ViewModel($data);
     }
 
     /**
@@ -79,15 +85,16 @@ class DepositController extends AbstractActionController
     * @param int $userId
     * @param float $amount Amount deposited
     * 
-    * @return bool True for bonus applied, False for no bonus
+    * @return int Bonus for bonus applied, 0 for no bonus
     */
     private function getBonus(int $userId, float $amount = 0) {
         $sql = 'SELECT * FROM bonuses WHERE trigger = ? AND active = 1';
         $resultset = $this->adapter->query($sql, ['deposit']);
 
         $available = $resultset->toArray();
+        $result = 0;
 
-        if (!$available) return false;
+        if (!$available) return 0;
 
         foreach ($available as $bonus) {
         	if ($bonus['type'] != 'percent') {
@@ -103,6 +110,7 @@ class DepositController extends AbstractActionController
 		        	1,
 		        	1//(int) ($bonus['type'] == 'real'),
     			];
+                $result += $bonus['value'];
 
 		        $this->adapter->query($sql, $params);
         	} else if ($bonus['type'] == 'percent' && $amount > 0) {
@@ -119,11 +127,12 @@ class DepositController extends AbstractActionController
 		        	1,
 		        	1//(int) ($bonus['type'] == 'real'),
     			];
+                $result += $earned;
 
 		        $this->adapter->query($sql, $params);
         	}
         }
 
-        return true;
+        return $result;
     }
 }

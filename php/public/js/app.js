@@ -23,6 +23,10 @@ app.config(function($routeProvider) {
     .when('/play', {
       templateUrl: 'tpl/game.html',
       controller: 'gameController'
+    })
+    .when('/panel', {
+      templateUrl: 'tpl/panel.html',
+      controller: 'panelController'
     });
 });
 
@@ -148,4 +152,85 @@ app.controller('gameController', function($scope, $resource, $http, $localStorag
       }
     });
   };
+});
+
+app.controller('panelController', function($scope, $resource, $http, $localStorage) {
+  $scope.users = [];
+  $scope.user = false;
+  $scope.active = 'login';
+
+  $scope.switch = function (where) {
+    $scope.active = where;
+  }
+
+  $http.get('/user').success(function (data, status, headers) {
+    $scope.users = data._embedded.users;
+  });
+
+  $scope.select = function() {
+    $http.get('/user/' + $scope.id).then(function (data, status, headers) {
+      $scope.user = data.data;
+      fillBalance(data.data.id);
+    }, function (response) {
+      alert(response.data.detail); // Alert with the error message
+    });
+  }
+
+  $scope.login = function () {
+    var data = {email: $scope.user.email, password: 'fakeit'};
+    $scope.loginInfo = '';
+
+    // I know, error handling in case the user doesn't exist, but c'mon
+    $http.post('/auth', data).success(function (data, status, headers) {
+      $scope.loginInfo = data.message;
+
+      if (Number(data.bonus) > 0) fillBalance($scope.user.id);
+    });
+  }
+
+  $scope.deposit = function (amount) {
+    var data = {user_id: $scope.user.id, amount: amount};
+    $scope.depositInfo = '';
+
+    $http.post('/deposit', data).success(function (data, status, headers) {
+      if (data.message) $scope.depositInfo = data.message;
+      if (Number(data.bonus) > 0) fillBalance($scope.user.id);
+    });
+  }
+
+  $scope.play = function (amount) {
+    var data = {user_id: $scope.user.id, bet: amount};
+    $scope.victory = false;
+    $scope.gameInfo = '';
+
+    $http.post('/play', data).success(function (data, status, headers) {
+      fillBalance($scope.user.id);
+
+      if (data.victory == true) {
+        $scope.gameInfo = 'You won ' + data.earnings . '$';
+        $scope.victory = true;
+      }
+      else $scope.gameInfo = 'You lost :(';
+    });
+  }
+
+  var fillBalance = function(id) {
+    $http.get('/wallet?user_id=' + id).success(function (data, status, headers) {
+        var balance = 0, bonuses = 0, id = 0;
+
+        for (d in data._embedded.wallets) {
+          // The user_id is gonna be the same for everyone anyways
+          id = data._embedded.wallets[d].user_id;
+
+          // Only double equals, because can't be sure if it's a string or int
+          if (data._embedded.wallets[d].active == 1) {
+            if (data._embedded.wallets[d].bonus == 1) bonuses += Number(data._embedded.wallets[d].balance);
+            else balance += Number(data._embedded.wallets[d].balance);
+          }
+        }
+
+        $scope.user['balance'] = balance;
+        $scope.user['bonus'] = bonuses;
+      });
+  }
 });

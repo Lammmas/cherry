@@ -18,12 +18,12 @@ class UsersEntity extends ArrayObject
     /**
      * Set the primary identifier
      *
-     * @param int $id
+     * @param int $user_id
      * 
      * @return EntityTrait
      */
-    public function setId($id) {
-        $this->id = $id;
+    public function setId($user_id) {
+        $this->id = $user_id;
         return $this;
     }
 
@@ -38,18 +38,5 @@ class UsersEntity extends ArrayObject
         unset($vars['password']); // Since we don't actually want to expose the Password
 
         return $vars;
-    }
-
-    /**
-    * Override the default function in order to encrypt the Password field
-    * 
-    * @param $array 
-    */
-    public function exchangeArray(array $array)
-    {
-        foreach ($array as $k => $v) {
-            if ($k == 'password') $this->password = password_hash($array['password'], PASSWORD_BCRYPT);
-            else $this->{$k} = $v;
-        }
     }
 }

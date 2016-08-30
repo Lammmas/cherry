@@ -18,7 +18,7 @@ The API endpoints are as such, with query parameters (`Sort` and `Order` are for
   - `/wallet` with optional parameters `User_id`, `Bonus_id`, `Balance`, `Original`, `Currency`, `Active`, `Bonus`
   - `/wallet/[:id]`
 4. Auth (POST)
-  - `/auth`
+  - `/auth` - You can force any user to pass auth by using `fakeit` as the password
 5. Deposit (POST)
   - `/deposit`
 6. Game (POST)
