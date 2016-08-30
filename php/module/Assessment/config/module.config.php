@@ -29,6 +29,36 @@ return [
                     ],
                 ],
             ],
+            'assessment.rpc.auth' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/auth',
+                    'defaults' => [
+                        'controller' => 'Assessment\\V1\\Rpc\\Auth\\Controller',
+                        'action' => 'auth',
+                    ],
+                ],
+            ],
+            'assessment.rpc.game' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/play',
+                    'defaults' => [
+                        'controller' => 'Assessment\\V1\\Rpc\\Game\\Controller',
+                        'action' => 'game',
+                    ],
+                ],
+            ],
+            'assessment.rpc.deposit' => [
+                'type' => 'Segment',
+                'options' => [
+                    'route' => '/deposit',
+                    'defaults' => [
+                        'controller' => 'Assessment\\V1\\Rpc\\Deposit\\Controller',
+                        'action' => 'deposit',
+                    ],
+                ],
+            ],
         ],
     ],
     'zf-versioning' => [
@@ -36,11 +66,14 @@ return [
             0 => 'assessment.rest.users',
             1 => 'assessment.rest.wallets',
             2 => 'assessment.rest.bonuses',
+            3 => 'assessment.rpc.auth',
+            5 => 'assessment.rpc.game',
+            8 => 'assessment.rpc.deposit',
         ],
     ],
     'zf-rest' => [
         'Assessment\\V1\\Rest\\Users\\Controller' => [
-            'listener' => 'Assessment\\V1\\Rest\\Users\\UsersResource',
+            'listener' => \Assessment\V1\Rest\Users\UsersResource::class,
             'route_name' => 'assessment.rest.users',
             'route_identifier_name' => 'user_id',
             'collection_name' => 'users',
@@ -54,7 +87,15 @@ return [
                 0 => 'GET',
                 1 => 'POST',
             ],
-            'collection_query_whitelist' => [],
+            'collection_query_whitelist' => [
+                0 => 'page',
+                1 => 'sort',
+                2 => 'order',
+                3 => 'email',
+                4 => 'name',
+                5 => 'age',
+                6 => 'gender',
+            ],
             'page_size' => 25,
             'page_size_param' => null,
             'entity_class' => \Assessment\V1\Rest\Users\UsersEntity::class,
@@ -62,7 +103,7 @@ return [
             'service_name' => 'users',
         ],
         'Assessment\\V1\\Rest\\Wallets\\Controller' => [
-            'listener' => 'Assessment\\V1\\Rest\\Wallets\\WalletsResource',
+            'listener' => \Assessment\V1\Rest\Wallets\WalletsResource::class,
             'route_name' => 'assessment.rest.wallets',
             'route_identifier_name' => 'wallet_id',
             'collection_name' => 'wallets',
@@ -76,7 +117,18 @@ return [
                 0 => 'GET',
                 1 => 'POST',
             ],
-            'collection_query_whitelist' => [],
+            'collection_query_whitelist' => [
+                0 => 'page',
+                1 => 'sort',
+                2 => 'direction',
+                3 => 'user',
+                4 => 'bonus',
+                5 => 'balance',
+                6 => 'original',
+                7 => 'currency',
+                8 => 'active',
+                9 => 'bonus',
+            ],
             'page_size' => 25,
             'page_size_param' => null,
             'entity_class' => \Assessment\V1\Rest\Wallets\WalletsEntity::class,
@@ -84,7 +136,7 @@ return [
             'service_name' => 'wallets',
         ],
         'Assessment\\V1\\Rest\\Bonuses\\Controller' => [
-            'listener' => 'Assessment\\V1\\Rest\\Bonuses\\BonusesResource',
+            'listener' => \Assessment\V1\Rest\Bonuses\BonusesResource::class,
             'route_name' => 'assessment.rest.bonuses',
             'route_identifier_name' => 'bonus_id',
             'collection_name' => 'bonuses',
@@ -98,7 +150,16 @@ return [
                 0 => 'GET',
                 1 => 'POST',
             ],
-            'collection_query_whitelist' => [],
+            'collection_query_whitelist' => [
+                0 => 'page',
+                1 => 'sort',
+                2 => 'direction',
+                3 => 'tigger',
+                4 => 'value',
+                5 => 'type',
+                6 => 'multiplier',
+                7 => 'active',
+            ],
             'page_size' => 25,
             'page_size_param' => null,
             'entity_class' => \Assessment\V1\Rest\Bonuses\BonusesEntity::class,
@@ -111,6 +172,9 @@ return [
             'Assessment\\V1\\Rest\\Users\\Controller' => 'HalJson',
             'Assessment\\V1\\Rest\\Wallets\\Controller' => 'HalJson',
             'Assessment\\V1\\Rest\\Bonuses\\Controller' => 'HalJson',
+            'Assessment\\V1\\Rpc\\Auth\\Controller' => 'HalJson',
+            'Assessment\\V1\\Rpc\\Game\\Controller' => 'HalJson',
+            'Assessment\\V1\\Rpc\\Deposit\\Controller' => 'HalJson',
         ],
         'accept_whitelist' => [
             'Assessment\\V1\\Rest\\Users\\Controller' => [
@@ -128,6 +192,21 @@ return [
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ],
+            'Assessment\\V1\\Rpc\\Auth\\Controller' => [
+                0 => 'application/vnd.assessment.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
+            'Assessment\\V1\\Rpc\\Game\\Controller' => [
+                0 => 'application/vnd.assessment.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
+            'Assessment\\V1\\Rpc\\Deposit\\Controller' => [
+                0 => 'application/vnd.assessment.v1+json',
+                1 => 'application/json',
+                2 => 'application/*+json',
+            ],
         ],
         'content_type_whitelist' => [
             'Assessment\\V1\\Rest\\Users\\Controller' => [
@@ -142,6 +221,18 @@ return [
                 0 => 'application/vnd.assessment.v1+json',
                 1 => 'application/json',
             ],
+            'Assessment\\V1\\Rpc\\Auth\\Controller' => [
+                0 => 'application/vnd.assessment.v1+json',
+                1 => 'application/json',
+            ],
+            'Assessment\\V1\\Rpc\\Game\\Controller' => [
+                0 => 'application/vnd.assessment.v1+json',
+                1 => 'application/json',
+            ],
+            'Assessment\\V1\\Rpc\\Deposit\\Controller' => [
+                0 => 'application/vnd.assessment.v1+json',
+                1 => 'application/json',
+            ],
         ],
     ],
     'zf-hal' => [
@@ -149,13 +240,13 @@ return [
             \Assessment\V1\Rest\Users\UsersEntity::class => [
                 'entity_identifier_name' => 'id',
                 'route_name' => 'assessment.rest.users',
-                'route_identifier_name' => 'users_id',
+                'route_identifier_name' => 'user_id',
                 'hydrator' => \Zend\Hydrator\ArraySerializable::class,
             ],
             \Assessment\V1\Rest\Users\UsersCollection::class => [
                 'entity_identifier_name' => 'id',
                 'route_name' => 'assessment.rest.users',
-                'route_identifier_name' => 'users_id',
+                'route_identifier_name' => 'user_id',
                 'is_collection' => true,
             ],
             \Assessment\V1\Rest\Wallets\WalletsEntity::class => [
@@ -198,29 +289,32 @@ return [
     ],
     'zf-apigility' => [
         'db-connected' => [
-            'Assessment\\V1\\Rest\\Users\\UsersResource' => [
+            \Assessment\V1\Rest\Users\UsersResource::class => [
                 'adapter_name' => 'Sqlite',
                 'table_name' => 'users',
                 'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
                 'controller_service_name' => 'Assessment\\V1\\Rest\\Users\\Controller',
                 'entity_identifier_name' => 'id',
                 'table_service' => 'Assessment\\V1\\Rest\\Users\\UsersResource\\Table',
+                'resource_class' => \Assessment\V1\Rest\Users\UsersResource::class,
             ],
-            'Assessment\\V1\\Rest\\Wallets\\WalletsResource' => [
+            \Assessment\V1\Rest\Wallets\WalletsResource::class => [
                 'adapter_name' => 'Sqlite',
                 'table_name' => 'wallets',
                 'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
                 'controller_service_name' => 'Assessment\\V1\\Rest\\Wallets\\Controller',
                 'entity_identifier_name' => 'id',
                 'table_service' => 'Assessment\\V1\\Rest\\Wallets\\WalletsResource\\Table',
+                'resource_class' => \Assessment\V1\Rest\Wallets\WalletsResource::class,
             ],
-            'Assessment\\V1\\Rest\\Bonuses\\BonusesResource' => [
+            \Assessment\V1\Rest\Bonuses\BonusesResource::class => [
                 'adapter_name' => 'Sqlite',
                 'table_name' => 'bonuses',
                 'hydrator_name' => \Zend\Hydrator\ArraySerializable::class,
                 'controller_service_name' => 'Assessment\\V1\\Rest\\Bonuses\\Controller',
                 'entity_identifier_name' => 'id',
                 'table_service' => 'Assessment\\V1\\Rest\\Bonuses\\BonusesResource\\Table',
+                'resource_class' => \Assessment\V1\Rest\Bonuses\BonusesResource::class,
             ],
         ],
     ],
@@ -233,6 +327,15 @@ return [
         ],
         'Assessment\\V1\\Rest\\Bonuses\\Controller' => [
             'input_filter' => 'Assessment\\V1\\Rest\\Bonuses\\Validator',
+        ],
+        'Assessment\\V1\\Rpc\\Auth\\Controller' => [
+            'input_filter' => 'Assessment\\V1\\Rpc\\Auth\\Validator',
+        ],
+        'Assessment\\V1\\Rpc\\Game\\Controller' => [
+            'input_filter' => 'Assessment\\V1\\Rpc\\Game\\Validator',
+        ],
+        'Assessment\\V1\\Rpc\\Deposit\\Controller' => [
+            'input_filter' => 'Assessment\\V1\\Rpc\\Deposit\\Validator',
         ],
     ],
     'input_filter_specs' => [
@@ -250,18 +353,24 @@ return [
                 'validators' => [],
             ],
             2 => [
+                'required' => true,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'password',
+            ],
+            3 => [
                 'name' => 'name',
                 'required' => true,
                 'filters' => [],
                 'validators' => [],
             ],
-            3 => [
+            4 => [
                 'name' => 'age',
                 'required' => true,
                 'filters' => [],
                 'validators' => [],
             ],
-            4 => [
+            5 => [
                 'name' => 'gender',
                 'required' => true,
                 'filters' => [],
@@ -355,6 +464,133 @@ return [
                 'filters' => [],
                 'validators' => [],
             ],
+        ],
+        'Assessment\\V1\\Rpc\\Auth\\Validator' => [
+            0 => [
+                'required' => true,
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\EmailAddress::class,
+                        'options' => [],
+                    ],
+                ],
+                'filters' => [],
+                'name' => 'email',
+            ],
+            1 => [
+                'required' => true,
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\StringLength::class,
+                        'options' => [
+                            'min' => '5',
+                        ],
+                    ],
+                ],
+                'filters' => [],
+                'name' => 'password',
+            ],
+        ],
+        'Assessment\\V1\\Rpc\\Game\\Validator' => [
+            0 => [
+                'required' => true,
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\GreaterThan::class,
+                        'options' => [
+                            'min' => '0',
+                        ],
+                    ],
+                ],
+                'filters' => [],
+                'name' => 'user_id',
+            ],
+            1 => [
+                'required' => true,
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\GreaterThan::class,
+                        'options' => [
+                            'min' => '0',
+                        ],
+                    ],
+                ],
+                'filters' => [],
+                'name' => 'bet',
+            ],
+        ],
+        'Assessment\\V1\\Rpc\\Fund\\Validator' => [
+            0 => [
+                'required' => true,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'user_id',
+            ],
+            1 => [
+                'required' => true,
+                'validators' => [],
+                'filters' => [],
+                'name' => 'amount',
+            ],
+        ],
+        'Assessment\\V1\\Rpc\\Deposit\\Validator' => [
+            0 => [
+                'required' => true,
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\GreaterThan::class,
+                        'options' => [],
+                    ],
+                ],
+                'filters' => [],
+                'name' => 'user_id',
+            ],
+            1 => [
+                'required' => true,
+                'validators' => [
+                    0 => [
+                        'name' => \Zend\Validator\GreaterThan::class,
+                        'options' => [
+                            'min' => '0',
+                        ],
+                    ],
+                ],
+                'filters' => [],
+                'name' => 'amount',
+            ],
+        ],
+    ],
+    'controllers' => [
+        'factories' => [
+            'Assessment\\V1\\Rpc\\Auth\\Controller' => \Assessment\V1\Rpc\Auth\AuthControllerFactory::class,
+            'Assessment\\V1\\Rpc\\Game\\Controller' => \Assessment\V1\Rpc\Game\GameControllerFactory::class,
+            'Assessment\\V1\\Rpc\\Deposit\\Controller' => \Assessment\V1\Rpc\Deposit\DepositControllerFactory::class,
+        ],
+    ],
+    'zf-rpc' => [
+        'Assessment\\V1\\Rpc\\Auth\\Controller' => [
+            'service_name' => 'Auth',
+            'http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'route_name' => 'assessment.rpc.auth',
+        ],
+        'Assessment\\V1\\Rpc\\Game\\Controller' => [
+            'service_name' => 'Game',
+            'http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'route_name' => 'assessment.rpc.game',
+        ],
+        'Assessment\\V1\\Rpc\\Deposit\\Controller' => [
+            'service_name' => 'Deposit',
+            'http_methods' => [
+                0 => 'GET',
+                1 => 'POST',
+            ],
+            'route_name' => 'assessment.rpc.deposit',
         ],
     ],
 ];

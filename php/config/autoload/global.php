@@ -9,4 +9,12 @@ return [
             'Sqlite' => [],
         ],
     ],
+    'router' => [
+        'routes' => [],
+    ],
+    'zf-mvc-auth' => [
+        'authentication' => [
+            'map' => [],
+        ],
+    ],
 ];
